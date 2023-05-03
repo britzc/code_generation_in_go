@@ -1,5 +1,3 @@
-//go:generate stringer -type=Season
-
 package main
 
 type Season int
