@@ -10,7 +10,6 @@ import (
 
 func main() {
 	fileName := os.Getenv("GOFILE")
-	fmt.Println(os.Getenv("TEMP01"))
 
 	fmt.Printf("Running go generate on %s\n", fileName)
 

@@ -1,4 +1,4 @@
-//go:generate mygen hello world
+//go:generate mygen Hello World
 
 package module
 

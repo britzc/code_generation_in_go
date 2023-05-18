@@ -1,0 +1,12 @@
+<h1>{{.PageTitle}}</h1>
+<ul>
+    {{range .Courses}}
+        {{if .Completed}}
+			<li>
+				<s>{{.Title}}</s>
+			</li>
+        {{else}}
+            <li>{{.Title}}</li>
+        {{end}}
+    {{end}}
+</ul>
