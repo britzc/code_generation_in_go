@@ -1,0 +1,2 @@
+Name string TEXT
+Overview string TEXT

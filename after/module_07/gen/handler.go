@@ -8,12 +8,14 @@ import (
 	"go/format"
 	"html/template"
 	"os"
+	"path/filepath"
 	"strings"
 )
 
 type Field struct {
 	Name string
 	Type string
+	DB   string
 }
 
 type Object struct {
@@ -29,7 +31,11 @@ func main() {
 	templatePath := args[2]
 	outputPath := args[3]
 
-	tmpl := template.Must(template.ParseFiles(templatePath))
+	funcMap := template.FuncMap{
+		"toLower": strings.ToLower,
+	}
+
+	tmpl := template.Must(template.New("handler").Funcs(funcMap).ParseFiles(templatePath))
 
 	schemaFile, err := os.Open(schemaPath)
 	if err != nil {
@@ -45,7 +51,7 @@ func main() {
 		line := scanner.Text()
 		parts := strings.Split(line, " ")
 
-		fields = append(fields, Field{Name: parts[0], Type: parts[1]})
+		fields = append(fields, Field{Name: parts[0], Type: parts[1], DB: parts[2]})
 	}
 
 	object := Object{
@@ -53,8 +59,12 @@ func main() {
 		Fields: fields,
 	}
 
+	templateName := filepath.Base(templatePath)
+
 	var tmplData bytes.Buffer
-	tmpl.Execute(&tmplData, object)
+	if err := tmpl.ExecuteTemplate(&tmplData, templateName, object); err != nil {
+		panic(err)
+	}
 
 	fmtData, err := format.Source(tmplData.Bytes())
 	if err != nil {
