@@ -1,18 +1,10 @@
 // DO NOT EDIT GENERATED FILE
 
- {{ $handler := ( print .Name "Handler" ) }}
- {{ $lowerName := ( toLower .Name ) }}
- {{ $plural := ( print .Name "s" ) }}
- {{ $lowerPlural := ( toLower $plural ) }}
-
 package main
 
 import (
-  "fmt"
   "html/template"
   "net/http"
-  "strconv"
-  "time"
 
   "github.com/gorilla/mux"
 )
@@ -20,105 +12,31 @@ import (
 type {{ .Name }} struct {
   ID int
   {{ range .Fields -}}
-  {{ .Name }} {{ .Type }}
+      {{ .Name }} {{ .Type }}
   {{ end -}}
-  Timestamp time.Time
 }
 
-type {{ $handler }} struct {
+type {{ .Name }}Handler struct {
   tmpl  *template.Template
-  repo *Repo
+  {{ .Name | toLower }}s []{{ .Name }}
 }
 
-func New{{ $handler }}(repo *Repo, tmpl *template.Template) (h *{{ $handler }}, err error) {
-  createSQL := `CREATE TABLE IF NOT EXISTS {{ $plural }} (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                {{ range .Fields -}}
-                {{ .Name | toLower }} {{ .DB }},
-                {{ end -}}
-                timestamp DATETIME NOT NULL
-                )`
-
-  if _, err := repo.Exec(createSQL); err != nil {
-    return nil, err
-  }
-  
-  h = &{{ $handler }} {
+func New{{ .Name }}Handler(tmpl *template.Template) (h *{{ .Name }}Handler, err error) {
+  h = &{{ .Name }}Handler {
     tmpl: tmpl,
-    repo: repo,
+    {{ .Name | toLower }}s : []{{ .Name }} {
+      { ID: 1, Name: "The Alchemist" },
+      { ID: 2, Name: "Atomic Habits" },
+    },
   }
 
   return h, nil
 }
 
-func (h *{{ $handler }}) RegisterHandlers(rtr *mux.Router) {
-  rtr.HandleFunc("/{{ $lowerPlural }}", h.get{{ $plural }}).Methods("GET")
-  rtr.HandleFunc("/{{ $lowerPlural }}/{id}", h.get{{ .Name }}).Methods("GET")
-  rtr.HandleFunc("/{{ $lowerPlural }}/{id}", h.submit{{ .Name
-  }}).Methods("POST")
+func (h *{{ .Name }}Handler) RegisterHandlers(rtr *mux.Router) {
+  rtr.HandleFunc("/{{ .Name | toLower }}s", h.get{{ .Name }}s).Methods("GET")
 }
 
-func (h *{{ $handler }}) get{{ $plural }}(w http.ResponseWriter, r *http.Request) {
-  rows, err := h.repo.Query("SELECT * FROM {{ $plural }} ORDER BY ID ASC")
-  if err != nil {
-    panic(err)
-  }
-  defer rows.Close()
-
-  {{ $lowerPlural }} := []{{ .Name }}{}
-  for rows.Next() {
-    {{ $lowerName }} := {{ .Name }}{}
-
-    err = rows.Scan(&{{ $lowerName }}.ID, {{ range .Fields -}} &{{
-    $lowerName }}.{{ .Name }}, {{ end -}} &{{ $lowerName }}.Timestamp)
-
-    {{ $lowerPlural }} = append({{ $lowerPlural }}, {{ $lowerName }})
-  }
-
-  h.tmpl.ExecuteTemplate(w, "{{ $lowerPlural }}.html", {{ $lowerPlural }})
+func (h *{{ .Name }}Handler) get{{ .Name }}s(w http.ResponseWriter, r *http.Request) {
+  h.tmpl.ExecuteTemplate(w, "{{ .Name | toLower }}s.html", h.{{ .Name | toLower }}s)
 }
-
-func (h *{{ $handler }}) get{{ .Name }}(w http.ResponseWriter, r *http.Request) {
-  vars := mux.Vars(r)
-  id, _ := strconv.Atoi(vars["id"])
-
-  if id == 0 {
-    h.tmpl.ExecuteTemplate(w, "{{ $lowerName }}.html", &{{ .Name }}{})
-    } else {
-      row := h.repo.QueryRow("SELECT * FROM {{ $plural }} WHERE (id = ?)", id)
-
-      {{ $lowerName }} := &{{ .Name }}{}
-
-      err := row.Scan(&{{ $lowerName }}.ID, {{ range .Fields -}} &{{
-      $lowerName }}.{{ .Name }}, {{ end -}} &{{ $lowerName }}.Timestamp)
-      if err != nil {
-        w.WriteHeader(http.StatusNotFound)
-        fmt.Fprint(w, "{{ .Name }} not Found")
-      } else {
-        h.tmpl.ExecuteTemplate(w, "{{ $lowerName }}.html", {{
-        $lowerName }})
-      }
-    }
-}
-
-func (h *{{ $handler }}) submit{{ .Name }}(w http.ResponseWriter, r *http.Request) {
-  r.ParseForm()
-
-  vars := mux.Vars(r)
-  id, _ := strconv.Atoi(vars["id"])
-
-  {{ range .Fields -}}
-  {{ .Name | toLower }} := r.Form.Get("{{ .Name | toLower }}")
-  {{ end -}}
-
-  if id == 0 {
-    execSQL := "INSERT INTO {{ $plural }} VALUES (NULL, {{ range
-    .Fields -}} ?, {{ end -}} ?);"
-  } else {
-  }
-}
-
-
-
-
-

@@ -1,0 +1,55 @@
+<html>
+	<head>
+		<style>
+			table, th, td {
+				border: 1px solid black;
+				border-collapse: collapse;
+			}
+		</style>
+	</head>
+	<body>
+		<a href="/books">Back to Books</a>
+		<h1>Reviews</h1>
+		<table>
+			<tr>
+			<th>
+				#
+			</th>
+			<th>
+				Content	
+			</th>
+			<th>
+				Review Date
+			</th>
+			<th>
+				Due Date
+			</th>
+			<th>
+			</th>
+			</tr>
+			{{ $count := 0 }}
+			{{ range $index, $value := .}}
+			<tr style="background-color: {{ getColor $value.Rating }}">
+				<td width="10%">
+					{{ inc $index }}
+				</td>
+				<td width="50%">
+					{{ $value.Content }}
+				</td>
+				<td width="10%">
+					{{ formatDate $value.Timestamp }}
+				</td>
+				<td width="10%">
+					{{ calcDueDate $value.Timestamp $value.Rating |
+					formatDate }}
+				</td>
+				<td width="10%">
+					<a href="/reviews/{{ $value.ID }}">Open</a>
+				</td>
+			</tr>
+			{{ $count = $index }}
+			{{ end }}
+		</table>
+		Total Reviews: {{ inc $count }}
+	</body>
+</html>

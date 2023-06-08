@@ -1,0 +1,3 @@
+BookID int INTEGER
+Content string TEXT
+Rating int INTEGER

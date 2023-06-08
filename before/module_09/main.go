@@ -1,4 +1,4 @@
-//go:generate go run gen/handler.go Book gen/book.txt gen/book.tmpl book.go
+//go:generate go run gen/handler.go Book gen/book.txt gen/handler.tmpl book.go
 
 package main
 
@@ -12,9 +12,14 @@ import (
 func main() {
 	rtr := mux.NewRouter()
 
+	repo, err := NewRepo("store.db")
+	if err != nil {
+		panic(err)
+	}
+
 	tmpl := template.Must(template.ParseGlob("html/*"))
 
-	bookHandler, err := NewBookHandler(tmpl)
+	bookHandler, err := NewBookHandler(repo, tmpl)
 	if err != nil {
 		panic(err)
 	}

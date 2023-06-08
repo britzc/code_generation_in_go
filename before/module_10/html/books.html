@@ -1,0 +1,40 @@
+<html>
+	<head>
+		<style>
+			table, th, td {
+				border: 1px solid black;
+				border-collapse: collapse;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>Books</h1>
+		<table>
+			<tr>
+			<th>
+				#
+			</th>
+			<th>
+				Name	
+			</th>
+			<th>
+			</th>
+			</tr>
+			{{range .}}
+			<tr>
+			<td width="10%">
+				{{ .ID }}
+			</td>
+			<td width="50%">
+				{{ .Name }}
+			</td>
+			<td width="20%">
+				<a href="/books/{{ .ID }}">Open</a>
+			</td>
+			</tr>
+			{{end}}
+		</table>
+		<hr />
+		<a href="/books/0">Add</a>
+	</body>
+</html>

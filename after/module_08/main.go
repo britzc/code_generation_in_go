@@ -12,9 +12,14 @@ import (
 func main() {
 	rtr := mux.NewRouter()
 
+	repo, err := NewRepo("store.db")
+	if err != nil {
+		panic(err)
+	}
+
 	tmpl := template.Must(template.ParseGlob("html/*"))
 
-	bookHandler, err := NewBookHandler(tmpl)
+	bookHandler, err := NewBookHandler(repo, tmpl)
 	if err != nil {
 		panic(err)
 	}

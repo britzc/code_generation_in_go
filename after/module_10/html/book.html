@@ -1,0 +1,59 @@
+<html>
+	<head>
+		<style>
+			table, th, td {
+				border: 1px solid black;
+				border-collapse: collapse;
+			}
+		</style>
+	</head>
+	<body>
+		<a href="/books">Back</a>
+		<h1>Book Details</h1>
+		<form action="/books/{{ .ID }}" method="post">
+			<p>
+			<label>Name:</label><br/>
+			<input name="name" type="text" value="{{ .Name }}"></input><br/>
+			</p>
+			<p>
+			<label>Overview:</label><br/>
+			<textarea name="overview">{{ .Overview }}</textarea><br/>
+			</p>
+			<p>
+			<label>Year:</label><br/>
+			<input name="year" type="number" 
+				value="{{ .Year }}"></input><br/>
+			</p>
+			<p>
+			<span class="star-rating">
+				Dislike
+				<input type="radio" name="rating" 
+				value="1" {{ if ( eq .Rating 1 ) }} checked {{ end }}>
+				</input>
+				<input type="radio" name="rating" 
+				value="2" {{ if ( eq .Rating 2 ) }} checked {{ end }}>
+				</input>
+				<input type="radio" name="rating" 
+				value="3" {{ if ( eq .Rating 3 ) }} checked {{ end }}>
+				</input>
+				Like
+			</span>
+			</p>
+			<p>
+			{{ if ( le .Stock 0 ) }}
+			Out of Stock
+			{{ else }}
+			In Stock
+			{{ end }}
+			</p>
+			<hr />
+			<input type="submit" value="Submit"></input>
+			{{ if ( gt .ID 0 ) }}
+			<hr />
+			<a href="/reviews/0?bookid={{ .ID }}">Add Review</a>
+			<hr />
+			<a href="/reviews?bookid={{ .ID }}">Open Reviews</a>
+			{{ end }}
+		</form>
+	</body>
+</html>

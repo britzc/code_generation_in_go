@@ -105,10 +105,9 @@ func (h *{{ $handler }}) submit{{ .Name }}(w http.ResponseWriter, r *http.Reques
 
   vars := mux.Vars(r)
   id, _ := strconv.Atoi(vars["id"])
-
   {{ range .Fields -}}
       {{ .Name | toLower }} := r.Form.Get("{{ .Name | toLower }}")
-  {{ end -}}
+  {{ end }}
 
   if id == 0 {
 

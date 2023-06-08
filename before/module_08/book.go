@@ -98,9 +98,9 @@ func (h *BookHandler) submitBook(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 	id, _ := strconv.Atoi(vars["id"])
-
 	name := r.Form.Get("name")
 	overview := r.Form.Get("overview")
+
 	if id == 0 {
 
 		execSQL := "INSERT INTO Books VALUES (NULL, ?, ?, ?);"
